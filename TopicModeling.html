@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.555">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Paul Moon">
+
+<title>Topic Modeling</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="TopicModeling_files/libs/clipboard/clipboard.min.js"></script>
+<script src="TopicModeling_files/libs/quarto-html/quarto.js"></script>
+<script src="TopicModeling_files/libs/quarto-html/popper.min.js"></script>
+<script src="TopicModeling_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="TopicModeling_files/libs/quarto-html/anchor.min.js"></script>
+<link href="TopicModeling_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="TopicModeling_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="TopicModeling_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="TopicModeling_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="TopicModeling_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<link href="TopicModeling_files/libs/htmltools-fill-0.5.8.1/fill.css" rel="stylesheet">
+
+<script src="TopicModeling_files/libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
+
+<link href="TopicModeling_files/libs/wordcloud2-0.0.1/wordcloud.css" rel="stylesheet">
+
+<script src="TopicModeling_files/libs/wordcloud2-0.0.1/wordcloud2-all.js"></script>
+
+<script src="TopicModeling_files/libs/wordcloud2-0.0.1/hover.js"></script>
+
+<script src="TopicModeling_files/libs/wordcloud2-binding-0.2.1/wordcloud2.js"></script>
+
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Topic Modeling</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Paul Moon </p>
+          </div>
+  </div>
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="introduction" class="level3">
+<h3 class="anchored" data-anchor-id="introduction">Introduction</h3>
+<p>In this project, we are assigned to look at data sets that have movie names, their genre, and their plots. Our goal is to organize them by topic and produce interesting graphs that can visually please the reader.</p>
+</section>
+<section id="movie-plots-cluster-plot" class="level3">
+<h3 class="anchored" data-anchor-id="movie-plots-cluster-plot">Movie Plots Cluster Plot</h3>
+<p>First, I will be doing this assignment by using the movie_plots csv in order to group movies by similarity in a cluster plot. This code might seen similar to you, Ajay, since this first part, I got from you. The first three chunks are what Jon Neimann sent me in order to help me jump start the project that was from you.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>movies <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"movie_plots.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>plots_by_word <span class="ot">&lt;-</span> movies <span class="sc">%&gt;%</span> <span class="fu">unnest_tokens</span>(word, Plot)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>plot_word_counts <span class="ot">&lt;-</span> plots_by_word <span class="sc">%&gt;%</span> </span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">anti_join</span>(stop_words) <span class="sc">%&gt;%</span> </span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(Movie.Name, word, <span class="at">sort =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">"freq_first_names"</span>)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>first_names <span class="ot">&lt;-</span> <span class="fu">tolower</span>(freq_first_names<span class="sc">$</span>Name)</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>plot_word_counts <span class="ot">&lt;-</span> plot_word_counts <span class="sc">%&gt;%</span> </span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span>(word <span class="sc">%in%</span> first_names))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>plots_dtm <span class="ot">&lt;-</span> plot_word_counts <span class="sc">%&gt;%</span> <span class="fu">cast_dtm</span>(Movie.Name, word, n)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>plots_lda <span class="ot">&lt;-</span> <span class="fu">LDA</span>(plots_dtm, <span class="at">k =</span> <span class="dv">30</span>, <span class="at">control =</span> <span class="fu">list</span>(<span class="at">seed =</span> <span class="dv">123</span>))</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>betas <span class="ot">&lt;-</span> <span class="fu">tidy</span>(plots_lda, <span class="at">matrix =</span> <span class="st">"beta"</span>)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>betas_wider <span class="ot">&lt;-</span> betas <span class="sc">%&gt;%</span> <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> topic, <span class="at">values_from =</span> beta)</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>plots_gamma <span class="ot">&lt;-</span> <span class="fu">tidy</span>(plots_lda, <span class="at">matrix =</span> <span class="st">"gamma"</span>)</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>plots_gamma_wider <span class="ot">&lt;-</span> plots_gamma <span class="sc">%&gt;%</span> </span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> topic, <span class="at">values_from =</span> gamma)</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>plots_gamma_wider_No_na <span class="ot">&lt;-</span> plots_gamma_wider <span class="sc">%&gt;%</span> <span class="fu">drop_na</span>()</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>cluster <span class="ot">&lt;-</span> <span class="fu">kmeans</span>(plots_gamma_wider <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span>document), <span class="dv">10</span>)</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="fu">fviz_cluster</span>(cluster, <span class="at">data =</span> plots_gamma_wider <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span>document))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="TopicModeling_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="movie-plots-with-genre-cluster-plot" class="level3">
+<h3 class="anchored" data-anchor-id="movie-plots-with-genre-cluster-plot">Movie Plots with Genre Cluster Plot</h3>
+<p>Now, that we have this cluster plot. we cannot just be done with this or there is nothing that I really did. Therefore, I will now try doing another cluster plot but this time by genre and how each genre plays a factor with how these movies are in relation to each other.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>movie_genres <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"movie_plots_with_genres.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>After reading this csv, we will do very similar code to what was done above with some altercations.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Same first part from the previous cluster plot</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>plots_by_word <span class="ot">&lt;-</span> movie_genres <span class="sc">%&gt;%</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest_tokens</span>(word, Plot) <span class="sc">%&gt;%</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">anti_join</span>(stop_words) <span class="sc">%&gt;%</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(Movie.Name, Genre, word, <span class="at">sort =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">"freq_first_names"</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>first_names <span class="ot">&lt;-</span> <span class="fu">tolower</span>(freq_first_names<span class="sc">$</span>Name)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>plots_by_word <span class="ot">&lt;-</span> plots_by_word <span class="sc">%&gt;%</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span>(word <span class="sc">%in%</span> first_names))</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>plots_dtm <span class="ot">&lt;-</span> plots_by_word <span class="sc">%&gt;%</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cast_dtm</span>(Movie.Name, word, n)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>lda_model <span class="ot">&lt;-</span> <span class="fu">LDA</span>(plots_dtm, <span class="at">k =</span> <span class="dv">10</span>, <span class="at">control =</span> <span class="fu">list</span>(<span class="at">seed =</span> <span class="dv">123</span>))</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>plots_gamma <span class="ot">&lt;-</span> <span class="fu">tidy</span>(lda_model, <span class="at">matrix =</span> <span class="st">"gamma"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> topic, <span class="at">values_from =</span> gamma)</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>cluster_result <span class="ot">&lt;-</span> <span class="fu">kmeans</span>(plots_gamma <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span>document), <span class="at">centers =</span> <span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>plots_gamma<span class="sc">$</span>cluster <span class="ot">&lt;-</span> <span class="fu">factor</span>(cluster_result<span class="sc">$</span>cluster)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="fu">fviz_cluster</span>(cluster_result, </span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>             <span class="at">data =</span> plots_gamma <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span>document, <span class="sc">-</span>cluster),</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>             <span class="at">geom =</span> <span class="st">"point"</span>,</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>             <span class="at">main =</span> <span class="st">"Cluster Plot of Movies by Topic Distributions"</span>,</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>             <span class="at">labelsize =</span> <span class="dv">4</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="TopicModeling_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>What we observed here is that the clustered looked a little different. However, we run into an issue. That it is indeed different. When we look at the two different data sets, the only thing that is different is the fact that there is an additional column “Genre”. Other than that, all the words are still the same and should result in similar topics. The conclusion is that the number of words in each “Genre” skewed the cluster plot into thinking that specific genres were more similar to each other, which in that case is what we wanted in the first place.</p>
+</section>
+<section id="movie-plots-with-genre-beta-plot" class="level3">
+<h3 class="anchored" data-anchor-id="movie-plots-with-genre-beta-plot">Movie Plots with Genre Beta Plot</h3>
+<p>Now, we will look at a Beta Plot. I think that this is a good way to look at the most common words visually.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Restating this chunk to make it more organized</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>plots_by_word <span class="ot">&lt;-</span> movie_genres <span class="sc">%&gt;%</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest_tokens</span>(word, Plot) <span class="sc">%&gt;%</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">anti_join</span>(stop_words) <span class="sc">%&gt;%</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(Movie.Name, Genre, word, <span class="at">sort =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>plots_dtm <span class="ot">&lt;-</span> plots_by_word <span class="sc">%&gt;%</span> </span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cast_dtm</span>(Movie.Name, word, n)</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>lda_model <span class="ot">&lt;-</span> <span class="fu">LDA</span>(plots_dtm, <span class="at">k =</span> <span class="dv">10</span>, <span class="at">control =</span> <span class="fu">list</span>(<span class="at">seed =</span> <span class="dv">123</span>))  <span class="co"># Adjust k as needed</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>beta_data <span class="ot">&lt;-</span> <span class="fu">tidy</span>(lda_model, <span class="at">matrix =</span> <span class="st">"beta"</span>)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="co">#Creating a beta plot</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>beta_plot <span class="ot">&lt;-</span> beta_data <span class="sc">%&gt;%</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(topic) <span class="sc">%&gt;%</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="co">#Using only 3 words due to space</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">top_n</span>(<span class="dv">3</span>, beta) <span class="sc">%&gt;%</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">reorder_within</span>(term, beta, topic), <span class="at">y =</span> beta, <span class="at">fill =</span> <span class="fu">as.factor</span>(topic))) <span class="sc">+</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">show.legend =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> topic, <span class="at">scales =</span> <span class="st">"free_y"</span>, <span class="at">ncol =</span> <span class="dv">2</span>) <span class="sc">+</span>  </span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>() <span class="sc">+</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Beta Plot: Top Terms in Each Topic"</span>,</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Term"</span>,</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Probability (Beta)"</span>) <span class="sc">+</span></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_reordered</span>() <span class="sc">+</span></span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">strip.text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">12</span>),  </span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>        <span class="at">plot.margin =</span> <span class="fu">unit</span>(<span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>), <span class="st">"cm"</span>)) </span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(beta_plot)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="TopicModeling_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>I decided to only put in 3 words per topic. Honestly, the reason why I did this was because when I did more words, they overlapped each other and I had no idea how to make it smaller without basically making the words disappear. Therefore, the data is good but due to the lack of information, this graph MIGHT not be the best representation of the Beta Plot.</p>
+</section>
+<section id="movie-plots-with-genre-scree-plot" class="level3">
+<h3 class="anchored" data-anchor-id="movie-plots-with-genre-scree-plot">Movie Plots with Genre Scree Plot</h3>
+<p>Now, we look at the Scree Plot.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>k_values <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">2</span>, <span class="dv">20</span>, <span class="at">by =</span> <span class="dv">2</span>)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>log_likelihoods <span class="ot">&lt;-</span> <span class="fu">numeric</span>(<span class="fu">length</span>(k_values)) </span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="fu">seq_along</span>(k_values)) {</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  k <span class="ot">&lt;-</span> k_values[i]</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  lda_model <span class="ot">&lt;-</span> <span class="fu">LDA</span>(plots_dtm, <span class="at">k =</span> k, <span class="at">control =</span> <span class="fu">list</span>(<span class="at">seed =</span> <span class="dv">123</span>))</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  log_likelihoods[i] <span class="ot">&lt;-</span> <span class="fu">logLik</span>(lda_model)</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>scree_data <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">k =</span> k_values, <span class="at">log_likelihood =</span> log_likelihoods)</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>scree_plot <span class="ot">&lt;-</span> scree_data <span class="sc">%&gt;%</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> k, <span class="at">y =</span> log_likelihood)) <span class="sc">+</span></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span> <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Scree Plot for Optimal Number of Topics (k)"</span>,</span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Number of Topics (k)"</span>,</span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Log(Likelihood)"</span>) <span class="sc">+</span></span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(scree_plot)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="TopicModeling_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>I don’t really know how this would help, but here is a good visualization on the logs of the topics and main themes.</p>
+</section>
+<section id="movie-plots-with-genre-artsy-looking-word-cloud" class="level3">
+<h3 class="anchored" data-anchor-id="movie-plots-with-genre-artsy-looking-word-cloud">Movie Plots with Genre Artsy-Looking Word Cloud</h3>
+<p>Now, I will create an artsy-looking word cloud using wordcloud2. Simple but interesting code.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(wordcloud2)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="co">#Creating the artsy-look thingy</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>top_terms <span class="ot">&lt;-</span> betas <span class="sc">%&gt;%</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(topic) <span class="sc">%&gt;%</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_max</span>(beta, <span class="at">n =</span><span class="dv">20</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(term, <span class="at">wt =</span> beta, <span class="at">sort =</span> <span class="cn">TRUE</span>) </span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a><span class="fu">wordcloud2</span>(top_terms, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">color =</span> <span class="st">"random-light"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="wordcloud2 html-widget html-fill-item" id="htmlwidget-a931752ae4f30d759859" style="width:100%;height:464px;"></div>
+<script type="application/json" data-for="htmlwidget-a931752ae4f30d759859">{"x":{"word":["life","world","time","gang","town","story","ranch","war","film","father","gold","family","city","money","day","team","game","sheriff","girl","horse","killed","fight","land","takes","daughter","race","history","red","murder","cattle","black","brother","planet","christmas","action","death","friend","alien","secret","people","wrestling","wife","crew","dance","movie","space","ranger","home","law","party","woman","earth","outlaw","military","real","grand","championship","video","footage","agent","crime","railroad","stiles","ranchers","arrives","past","series","york","brothers","map","rescue","west","marshal","president","live","kill","named","evil","saunders","romance","learns","tex","white","learn","stories","prison","hollywood","basketball","discovers","brown","sister","indian","drugs","reality","cowboy","army","kid","makes","vasta","battle","kingdom","rush","mcguire","oney","dancer","meets","josey","save","islam","lash","fuzzy","cottrell","savage","civil","games","journey","rowe","skull","texas","honor","parents","baroque","walters","humanity","expedition","captain","religion","riders","cantrell","truthful","tree","western","martial","kidnapped","stage","human","soccer","fall","dances","paralympic","players","venters","pavloff","horses","mine","mesquiteers","job","adams","tulliver","purifiers","french","college","dr","frail","roberts","babak","durango","jail","slave","quest","bounty","drug","stranger","mission","curly","el","reputation","ringo","rights","gun","trouble","manas","power","lassiter","drive","soul","abu","jantapan","karaf","machine","united","moments","bullitt","straight","wild","montana","races","units","outlaws","match","3","pass","rivell","tells","world's","olcott","property","range","return","saloon","club","cross","lives","moto","times","starrett","morrell","pony","rancher","church","tale","racing","sailing","women's","company","rustlers","vineyard","ninja","wizard","posing","station","bandit","posse","trail","stars","o'hara","strange","rider","justice","music","gangs","business","foreman","sends","dealers","roh","emden","meet","falls","escape","american","night","detroit","detective","professional","gangsta","cast","documentary","gillespie","cities","ghost","wales","brownsville","granger","wcw","century","edinburgh","olympic","peaceful","baby","ranse","sports","express","run","apocalypse","affair","arabella","set","gunfighter","nate","wine","revolution","busch","monster","hot","tournament","serial","mankind","championships","patton","lion","pocatello","tv","national","emotions","madera","government","north","fighting","memories","tennis","living","line","vengeance","true","football","hero","international","river","settlers","daltons","edinburgh's","drama","duke","gonzales","loves","wilkins","begin","house","magazine","mikey","wipers","mirror","lead","mysterious","biggest","arts","officer","bash","films","hill","played","scene","awards","road","crosby","cyclone","exercises","feelings","note","slade","tricks","authentic","california","dancers","hawk","hunt","keats","matthews","scroll","friends","relationships","women","fibromyalgia","weapon","5","mugen","south","beck","special","warriors","bet","healing","shop","tin","leaves","plans","super","wars","beautiful","maverick","society","agency","matters","inside","energy","police","8","brooklyn","charly","erotic","gajraj","hand","hoss","tabor","left","streets","girls","pro","san","build","champion","designed","exercise","fibro","galaxy","hoppy","jones","slowly","16","architecture","berlin","characters","humans","including","lyal","mile","mtr","started","tales","triple","usa","veterans","winning","deadly","force","surfing","top","truck","wingnut"],"freq":[0.1256375851413162,0.1128622004781021,0.08787536864757194,0.07826480897984707,0.07500432316506954,0.0620546117411856,0.059593057210501,0.05726495131062228,0.04687531946631707,0.03960782807177798,0.03638281310031297,0.02913623441558292,0.02888168287699341,0.02825778353551616,0.02821545537791319,0.02731788536645036,0.02521404622861454,0.02505838059334917,0.02435810205250741,0.02435528977068482,0.02435423310410107,0.02380861479546253,0.02367850015575049,0.02324622385432486,0.02304622276843282,0.02269528380096992,0.02033704335751955,0.02005470854683036,0.01875419724835627,0.01796562348652389,0.01787516172109314,0.01772514958532335,0.0169270076140759,0.01690433406377567,0.01670007676939557,0.01622150487912906,0.01589437773295056,0.01500756816519777,0.01481228835718124,0.01474058059197567,0.01456915001715652,0.01432828387486019,0.01388042946128209,0.01262855495484767,0.01211305085941081,0.01207233096438026,0.01195534726559428,0.01192836540927484,0.01188396768349088,0.01165634918645012,0.01163371311519183,0.0116290441020931,0.01145924440693515,0.01130853788687497,0.0112831917480872,0.01109133347116258,0.01100286958215699,0.01096269611667348,0.01071945486601929,0.01066697018407085,0.01018940941046143,0.01010923433710782,0.009897461562486685,0.009702159988433171,0.009629528025324388,0.009592739562472943,0.009592690048531704,0.009570339091206108,0.009503819117468153,0.009287983967007585,0.009178323769248389,0.008985741312241138,0.008981805429651945,0.008905214792000226,0.008839774362597218,0.00873490835981232,0.008681753697597416,0.008676255989921604,0.008671537343240551,0.008518067170487647,0.008428940396373798,0.008419046601927209,0.008404317698614352,0.008329377979392219,0.008275042024402518,0.008252334789032041,0.008200064892205167,0.008169496561737499,0.008158125497818986,0.008092991348060224,0.008052711936447039,0.007969895301875835,0.007912064481504624,0.007902012860463785,0.007882284670697289,0.007856908714455831,0.007816395881431158,0.007776936955960405,0.007717498934093691,0.007658537753123406,0.007445604506453566,0.00743038707259261,0.007428466367884607,0.007428466367884607,0.007417560452598186,0.007376289900115303,0.007265913525232095,0.007232425124924121,0.007200219672279269,0.007058792987886708,0.007058792755615212,0.007046837351388256,0.007046837351388256,0.006974012149898271,0.006862620827213381,0.006777188030920128,0.006753151243531461,0.006642291705850865,0.006589461027948427,0.006585947239194394,0.006552266340496361,0.006314317309713017,0.006314317309713017,0.006228288180523646,0.006191989311338394,0.006150048669153871,0.006092493568851692,0.006081461248195051,0.006058570747472444,0.006058570747472444,0.006038447005318968,0.005996796495237833,0.005976250466182042,0.005929663134696095,0.005923042365519969,0.005902887647796752,0.005901886722127536,0.005869110332252357,0.005657857271400112,0.005638090997534906,0.005619497867069913,0.005613656536795433,0.00561272649752268,0.005546040732537103,0.005540384905209328,0.005470265961993916,0.005466709872732268,0.005452713672725202,0.005452713672725202,0.005446367151205279,0.005446331041158332,0.005440486292307442,0.005434602304787073,0.005434602304787073,0.005412410367656417,0.005412244244096065,0.005412244244096065,0.005407965644115191,0.005402520994825169,0.005394418168536523,0.005393647023871655,0.005345971142150899,0.005298252796925513,0.005254257848061169,0.005242011926420346,0.005242011771466677,0.005239832591904713,0.005239832591021031,0.005239818694999241,0.005226072420797646,0.005216501118765594,0.005176448191136039,0.005155322801019678,0.005145851825395811,0.005141187517986443,0.005042831474418898,0.005035897814378622,0.005035897814378622,0.005035897814378622,0.005035897814378622,0.005035897814378622,0.005027923933970182,0.004980302368037056,0.004980194406776966,0.004967245899685765,0.004953591449070711,0.004953591449070711,0.004953591449070711,0.004952219722677217,0.004945040301732123,0.004929781951580499,0.004911135685332349,0.004911135685332349,0.004911135685332349,0.004911135685332344,0.004846856597977955,0.004846856597977955,0.004846856597977955,0.004846856597977955,0.004846856597977955,0.004845626145409444,0.004830757604255175,0.004811031437916813,0.004811031437916813,0.004811031437916813,0.004810883772529835,0.00478337118711968,0.004755117885217907,0.004754806830943925,0.004727205870472023,0.004727205870472023,0.004714794889630481,0.004714794889630481,0.004714794889623764,0.004705861991939401,0.004678047113992337,0.004657628970581966,0.004612982666836039,0.004612292319461598,0.004607104818283296,0.004586760435617806,0.004586741480963227,0.004575447553981623,0.004536369044555585,0.004533665548297819,0.00452628581712009,0.004517479234334531,0.004505763292759014,0.004504753559494644,0.004498632442809221,0.004496665361565003,0.0044863737765577,0.004485714314893601,0.004481490625243962,0.004450536271558912,0.004450536271558912,0.004430904413710322,0.004424608510578312,0.004418643701662968,0.004417619243440711,0.004406410587581297,0.004406410587581297,0.004366016278241113,0.004366015889662175,0.004362782223155449,0.004357764572032427,0.004334392517936875,0.004334392517936875,0.004334392517936875,0.004314124558269315,0.004238449556385391,0.004238449556385391,0.004228102410832955,0.004228102410832955,0.004228102394143462,0.004223151278285153,0.004223151278285153,0.004223151278285153,0.004223093801401857,0.004209544873142014,0.004209544873142014,0.004209544873142014,0.004189311715326641,0.004169814152189054,0.004117567644830706,0.004100032446102584,0.004100032446102584,0.004097058479395262,0.004075425349259224,0.004075425349259224,0.004075425349259224,0.00405189074562171,0.00404125276254041,0.004034265179535115,0.004024232876979128,0.004018405332309964,0.004015716224447151,0.003978367698207128,0.00396933650214722,0.003960500089980078,0.003956032241385699,0.003956032241385699,0.003937313453818977,0.003934209290048203,0.003931508944815264,0.003931508944815264,0.003882228508194769,0.00387659523135578,0.003821828312725535,0.003821194857664225,0.003812431728810635,0.003767075668081085,0.003763849669964802,0.003761670468840346,0.003758960764888308,0.003747833367652476,0.003735226776027795,0.003735226776027795,0.003735226776027795,0.003717460574539169,0.003695257368499512,0.003695257368499512,0.003686713245916409,0.003635142448483464,0.003635142448483464,0.003635142448483464,0.003614550059269727,0.003614468500774808,0.003609391145300008,0.003608273578437607,0.003608273578437607,0.003608273578437607,0.003587876089340395,0.003566001173247155,0.003559829475666326,0.003556697998542969,0.003541923611929717,0.003529981591472974,0.003523418675694128,0.003523418675694128,0.003523418675694128,0.003523418675694128,0.003523418675694128,0.003521214928480528,0.003521214928480528,0.003416693705085485,0.003416693705085485,0.003416693705085485,0.003416693705085485,0.003416693705085485,0.003416693705085485,0.003416693705085485,0.003394714362840064,0.003394714362840064,0.003394714362840064,0.003394714362840064,0.003394714362840064,0.003394714362840064,0.003394714362840064,0.003394714362840064,0.003367710635450344,0.003367710634627027,0.003351112659036957,0.003327624439522265,0.003327624439521816,0.003323178310282739,0.003323178310282739,0.003323178310282739,0.003276257454012719,0.003276257454012719,0.003276257454012719,0.003267798624694997,0.003267798624694997,0.003267798624694997,0.003267798624694997,0.003238807353568714,0.003213182502761305,0.003167363458713868,0.003167363458713868,0.003112688980023162,0.003112688980023162,0.003112688980023162,0.003098185765088338,0.003098185765088338,0.003030119001692798,0.003025698883563087,0.003025625438226203,0.003006894648698008,0.003006894648698008,0.003006894648698008,0.003006894648698008,0.003006894648698008,0.003006894648698008,0.003006894648698008,0.003006894648698008,0.002980139270733634,0.002956399549930624,0.002910677518827405,0.002910677518827405,0.002910677518827405,0.002773020366268556,0.002773020366268556,0.002773020366268556,0.002773020366268556,0.002773020366268556,0.002773020366268556,0.002773020366268556,0.002773020366268556,0.002773020366268556,0.002639469548928223,0.002639469548928223,0.002639469548928223,0.002639469548928223,0.002639469548928223,0.002639469548928223,0.002639469548928223,0.002639469548928223,0.002639469548928223,0.002639469548928223,0.002639469548928223,0.002639469548928223,0.002639469548928223,0.002639469548928223,0.002639469548928223,0.002521415737209448,0.002521415737209448,0.002521415737209448,0.002521415737209448,0.002521415737209448,0.002521415737209448],"fontFamily":"Segoe UI","fontWeight":"bold","color":"random-light","minSize":0,"weightFactor":1432.69229345293,"backgroundColor":"white","gridSize":0,"minRotation":-0.7853981633974483,"maxRotation":0.7853981633974483,"shuffle":true,"rotateRatio":0.4,"shape":"circle","ellipticity":0.65,"figBase64":null,"hover":null},"evals":[],"jsHooks":{"render":[{"code":"function(el,x){\n                        console.log(123);\n                        if(!iii){\n                          window.location.reload();\n                          iii = False;\n\n                        }\n  }","data":null}]}}</script>
+</div>
+</div>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

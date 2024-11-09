@@ -5,9 +5,7 @@ editor: visual
 author: Paul Moon
 ---
 
-```{r, echo = FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
 library(tidyverse)
 library(topicmodels)
 library(tidytext)
@@ -126,6 +124,7 @@ lda_model <- LDA(plots_dtm, k = 10, control = list(seed = 123))  # Adjust k as n
 ```
 
 ```{r}
+beta_data <- tidy(lda_model, matrix = "beta")
 #Creating a beta plot
 beta_plot <- beta_data %>%
   group_by(topic) %>%
@@ -148,22 +147,6 @@ print(beta_plot)
 ```
 
 I decided to only put in 3 words per topic. Honestly, the reason why I did this was because when I did more words, they overlapped each other and I had no idea how to make it smaller without basically making the words disappear. Therefore, the data is good but due to the lack of information, this graph MIGHT not be the best representation of the Beta Plot.
-
-### Movie Plots with Genre K-Means Clustering
-
-Next, I will perform a k-means clustering of groups. This is a way to transform the document-topic gamma values into a format of clustering.
-
-```{r}
-#Honestly chat helped me with this... I do understand it though
-gamma_wider <- gammas %>% pivot_wider(names_from = topic, values_from = gamma)
-gamma_wider <- gamma_wider %>% drop_na()
-
-cluster <- kmeans(gamma_wider %>% select(-document), centers = 10)
-
-fviz_cluster(cluster, data = gamma_wider %>% select(-document), 
-             geom = "point", stand = FALSE, 
-             main = "K-means Clustering of Movies")
-```
 
 ### Movie Plots with Genre Scree Plot
 
@@ -197,7 +180,7 @@ I don't really know how this would help, but here is a good visualization on the
 
 Now, I will create an artsy-looking word cloud using wordcloud2. Simple but interesting code.
 
-```{r, warning = FALSE}
+```{r, warning = FALSE, message = FALSE}
 library(wordcloud2)
 
 #Creating the artsy-look thingy
